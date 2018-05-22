@@ -22,7 +22,7 @@ class CollapsingActivity : AppCompatActivity() {
     private fun assignViews() {
         tl_normal.setupWithViewPager(view_pager)
 
-        
+
     }
 
     private fun initData() {
@@ -43,6 +43,8 @@ class CollapsingActivity : AppCompatActivity() {
             override fun isViewFromObject(view: View, `object`: Any) = view == `object`
 
             override fun getItemPosition(`object`: Any) = POSITION_NONE
+
+            override fun getPageTitle(position: Int) = "Title$position"
         }
     }
 }
