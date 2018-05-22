@@ -38,7 +38,8 @@ class CollapsingTabLayout : ViewGroup {
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         for (i in 0 until childCount) {
-
+            val child = getChildAt(i)
+            child.layout(0, 0, 100, 100)
         }
     }
 
