@@ -1,6 +1,8 @@
 package com.fanhl.collapsingtablayout
 
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Color
 import android.util.AttributeSet
 import android.view.ViewGroup
 
@@ -17,5 +19,9 @@ class CollapsingTabLayout : ViewGroup {
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
 
+    }
+
+    override fun onDraw(canvas: Canvas?) {
+        super.onDraw(canvas)
     }
 }
