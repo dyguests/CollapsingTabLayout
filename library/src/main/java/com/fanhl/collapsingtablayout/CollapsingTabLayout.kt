@@ -51,6 +51,11 @@ class CollapsingTabLayout : ViewGroup {
         }
     }
 
+    internal fun setScrollPosition(position: Int, positionOffset: Float, updateSelectedText: Boolean,
+                                   updateIndicatorPosition: Boolean) {
+        // FIXME: 2018/5/22 fanhl
+    }
+
     private fun selectTab(tabAt: Tab?, updateIndicator: Boolean) {
         // FIXME: 2018/5/22 fanhl
     }
@@ -58,7 +63,7 @@ class CollapsingTabLayout : ViewGroup {
 
     private fun getTabCount(): Int {
         // FIXME: 2018/5/22 fanhl
-        return 1
+        return 3
     }
 
     private fun getSelectedTabPosition(): Int {
@@ -89,6 +94,10 @@ class CollapsingTabLayout : ViewGroup {
             if (mPageChangeListener == null) {
                 mPageChangeListener = TabLayoutOnPageChangeListener(this)
             }
+            mPageChangeListener?.reset()
+            viewPager.addOnPageChangeListener(mPageChangeListener!!)
+
+            // FIXME: 2018/5/22 fanhl
         }
     }
 
@@ -121,6 +130,17 @@ class CollapsingTabLayout : ViewGroup {
         }
 
         override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            val tabLayout = mTabLayoutRef.get()
+            if (tabLayout != null) {
+                // Only update the text selection if we're not settling, or we are settling after
+                // being dragged
+                val updateText = mScrollState != SCROLL_STATE_SETTLING || mPreviousScrollState == SCROLL_STATE_DRAGGING
+                // Update the indicator if we're not settling after being idle. This is caused
+                // from a setCurrentItem() call and will be handled by an animation from
+                // onPageSelected() instead.
+                val updateIndicator = !(mScrollState == SCROLL_STATE_SETTLING && mPreviousScrollState == SCROLL_STATE_IDLE)
+                tabLayout.setScrollPosition(position, positionOffset, updateText, updateIndicator)
+            }
         }
 
         override fun onPageSelected(position: Int) {
@@ -131,6 +151,10 @@ class CollapsingTabLayout : ViewGroup {
                 val updateIndicator = mScrollState == SCROLL_STATE_IDLE || mScrollState == SCROLL_STATE_SETTLING && mPreviousScrollState == SCROLL_STATE_IDLE
                 tabLayout.selectTab(tabLayout.getTabAt(position), updateIndicator)
             }
+        }
+
+        fun reset() {
+            // FIXME: 2018/5/22 fanhl
         }
 
     }
