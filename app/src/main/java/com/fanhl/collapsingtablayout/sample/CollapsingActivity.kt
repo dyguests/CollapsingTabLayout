@@ -20,9 +20,8 @@ class CollapsingActivity : AppCompatActivity() {
     }
 
     private fun assignViews() {
+        tl_dummy.setupWithViewPager(view_pager)
         tl_normal.setupWithViewPager(view_pager)
-
-
     }
 
     private fun initData() {
