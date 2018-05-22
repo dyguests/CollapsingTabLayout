@@ -10,15 +10,19 @@
     <com.fanhl.collapsingtablayout.DummyTabLayout
         android:id="@+id/tl_dummy"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        android:layout_height="50dp"
+        android:background="#ffe9e4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.fanhl.collapsingtablayout.CollapsingTabLayout
+        android:id="@+id/tl_collapsing"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#fffce9"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tl_dummy"/>
 
 </android.support.constraint.ConstraintLayout>
