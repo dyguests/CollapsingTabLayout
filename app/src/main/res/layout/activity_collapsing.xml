@@ -13,7 +13,14 @@
         android:layout_height="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="100dp"
+            android:layout_height="48dp"
+            android:text="TextView"/>
+    </com.fanhl.collapsingtablayout.CollapsingTabLayout>
 
     <com.fanhl.collapsingtablayout.DummyTabLayout
         android:id="@+id/tl_dummy"

@@ -2,9 +2,8 @@ package com.fanhl.collapsingtablayout
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
-import android.text.TextPaint
 import android.util.AttributeSet
+import android.view.View
 import android.view.ViewGroup
 
 /**
@@ -26,10 +25,21 @@ class CollapsingTabLayout : ViewGroup {
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
+        val specSizeWidth = View.MeasureSpec.getSize(widthMeasureSpec)
+        val specSizeHeight = View.MeasureSpec.getSize(heightMeasureSpec)
+
+        setMeasuredDimension(specSizeWidth, specSizeHeight)
+
+        for (i in 0 until childCount) {
+            val child = getChildAt(i)
+            this.measureChild(child, widthMeasureSpec, heightMeasureSpec)
+        }
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        for (i in 0 until childCount) {
 
+        }
     }
 
     /**
@@ -49,4 +59,6 @@ class CollapsingTabLayout : ViewGroup {
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
     }
+
+
 }
