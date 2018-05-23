@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.DataSetObserver
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
+import android.support.design.R
 import android.support.v4.util.Pools
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.PointerIconCompat
@@ -35,6 +36,8 @@ class CollapsingTabLayout(context: Context, attrs: AttributeSet? = null, defStyl
     internal var mTabPaddingEnd: Int = 0
     internal var mTabPaddingBottom: Int = 0
 
+    internal var mTabTextMultiLineSize: Float = 0F
+
     internal val mTabBackgroundResId: Int
 
     internal var mTabMaxWidth = Integer.MAX_VALUE
@@ -63,6 +66,25 @@ class CollapsingTabLayout(context: Context, attrs: AttributeSet? = null, defStyl
         mTabStrip = SlidingTabStrip(context)
 
         super.addView(mTabStrip, 0, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT))
+
+        val a = context.obtainStyledAttributes(attrs, R.styleable.TabLayout, defStyleAttr, R.style.Widget_Design_TabLayout)
+
+        mTabPaddingBottom = a.getDimensionPixelSize(R.styleable.TabLayout_tabPadding, 0)
+        mTabPaddingEnd = mTabPaddingBottom
+        mTabPaddingTop = mTabPaddingEnd
+        mTabPaddingStart = mTabPaddingTop
+
+        mRequestedTabMinWidth = a.getDimensionPixelSize(R.styleable.TabLayout_tabMinWidth, INVALID_WIDTH)
+        mRequestedTabMaxWidth = a.getDimensionPixelSize(R.styleable.TabLayout_tabMaxWidth, INVALID_WIDTH)
+        mTabBackgroundResId = a.getResourceId(R.styleable.TabLayout_tabBackground, 0)
+
+        a.recycle()
+
+        // TODO add attr for these
+        val res = resources
+        mTabTextMultiLineSize = res.getDimensionPixelSize(R.dimen.design_tab_text_size_2line).toFloat()
+        mScrollableTabMinWidth = res.getDimensionPixelSize(R.dimen.design_tab_scrollable_min_width)
+
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
