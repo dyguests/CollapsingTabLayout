@@ -477,6 +477,18 @@ class CollapsingTabLayout(context: Context, attrs: AttributeSet? = null, defStyl
     }
 
     internal inner class TabView(context: Context) : LinearLayout(context) {
+        // FIXME: 2018/5/23 fanhl 这里是否可以自定义
+
+        private var mTab: Tab? = null
+        private var mTextView: TextView? = null
+        private var mIconView: ImageView? = null
+
+        private var mCustomView: View? = null
+        private var mCustomTextView: TextView? = null
+        private var mCustomIconView: ImageView? = null
+
+        private var mDefaultMaxLines = 2
+
 
     }
 
