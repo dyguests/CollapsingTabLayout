@@ -6,9 +6,13 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.support.v4.util.Pools
 import android.support.v4.view.PagerAdapter
+import android.support.v4.view.PointerIconCompat
+import android.support.v4.view.ViewCompat
 import android.support.v4.view.ViewPager
 import android.support.v4.view.ViewPager.*
+import android.support.v7.content.res.AppCompatResources
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.View
 import android.widget.*
 import java.lang.ref.WeakReference
@@ -25,6 +29,15 @@ class CollapsingTabLayout(context: Context, attrs: AttributeSet? = null, defStyl
 
     private val mTabStrip: SlidingTabStrip
 
+    // FIXME: 2018/5/23 fanhl 之后这部分可能要改成不通过 TabLayout来设定，而是用TabView来设定
+    internal var mTabPaddingStart: Int = 0
+    internal var mTabPaddingTop: Int = 0
+    internal var mTabPaddingEnd: Int = 0
+    internal var mTabPaddingBottom: Int = 0
+
+    internal val mTabBackgroundResId: Int
+
+    internal var mTabMaxWidth = Integer.MAX_VALUE
     private val mRequestedTabMinWidth: Int
     private val mRequestedTabMaxWidth: Int
     private val mScrollableTabMinWidth: Int
@@ -462,7 +475,7 @@ class CollapsingTabLayout(context: Context, attrs: AttributeSet? = null, defStyl
 
         internal fun updateView() {
             if (mView != null) {
-                mView.update()
+                mView!!.update()
             }
         }
 
@@ -489,7 +502,35 @@ class CollapsingTabLayout(context: Context, attrs: AttributeSet? = null, defStyl
 
         private var mDefaultMaxLines = 2
 
+        init {
+            if (mTabBackgroundResId != 0) {
+                ViewCompat.setBackground(this, AppCompatResources.getDrawable(context, mTabBackgroundResId))
+            }
+            ViewCompat.setPaddingRelative(this, mTabPaddingStart, mTabPaddingTop, mTabPaddingEnd, mTabPaddingBottom)
+            gravity = Gravity.CENTER
+            orientation = LinearLayout.VERTICAL
+            isClickable = true
+            ViewCompat.setPointerIcon(this, PointerIconCompat.getSystemIcon(getContext(), PointerIconCompat.TYPE_HAND))
+        }
 
+        fun setTab(tab: Tab?) {
+            if (tab != mTab) {
+                mTab = tab
+                update()
+            }
+        }
+
+        fun reset() {
+            setTab(null)
+            isSelected = false
+        }
+
+        fun update() {
+            val tab = mTab
+            val custom = tab?.getCustomView()
+
+            // FIXME: 2018/5/23 fanhl
+        }
     }
 
     /**
