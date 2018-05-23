@@ -1,7 +1,9 @@
 package com.fanhl.collapsingtablayout
 
 import android.content.Context
+import android.database.DataSetObserver
 import android.graphics.Canvas
+import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.util.AttributeSet
 import android.view.View
@@ -16,8 +18,11 @@ import java.util.ArrayList
  */
 class CollapsingTabLayout : ViewGroup {
     private val mTabs = ArrayList<Tab>()
+    private var mSelectedTab: Tab? = null
 
     internal var mViewPager: ViewPager? = null
+    private var mPagerAdapter: PagerAdapter? = null
+    private var mPagerAdapterObserver: DataSetObserver? = null
     private var mPageChangeListener: TabLayoutOnPageChangeListener? = null
 
     constructor(context: Context) : super(context) {}
@@ -28,6 +33,10 @@ class CollapsingTabLayout : ViewGroup {
 
     init {
 
+    }
+
+    override fun addView(child: View?) {
+        super.addView(child)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -51,8 +60,7 @@ class CollapsingTabLayout : ViewGroup {
         }
     }
 
-    internal fun setScrollPosition(position: Int, positionOffset: Float, updateSelectedText: Boolean,
-                                   updateIndicatorPosition: Boolean) {
+    internal fun setScrollPosition(position: Int, positionOffset: Float, updateSelectedText: Boolean, updateIndicatorPosition: Boolean) {
         // FIXME: 2018/5/22 fanhl
     }
 
@@ -87,6 +95,14 @@ class CollapsingTabLayout : ViewGroup {
             // FIXME: 2018/5/22 fanhl mAdapterChangeListener
         }
 
+        // FIXME: 2018/5/23 fanhl
+//        if (mCurrentVpSelectedListener != null) {
+//            // If we already have a tab selected listener for the ViewPager, remove it
+//            removeOnTabSelectedListener(mCurrentVpSelectedListener)
+//            mCurrentVpSelectedListener = null
+//        }
+
+
         if (viewPager != null) {
             mViewPager = viewPager
 
@@ -98,7 +114,39 @@ class CollapsingTabLayout : ViewGroup {
             viewPager.addOnPageChangeListener(mPageChangeListener!!)
 
             // FIXME: 2018/5/22 fanhl
+
+            val adapter = viewPager.adapter
+            if (adapter != null) {
+                // Now we'll populate ourselves from the pager adapter, adding an observer if
+                // autoRefresh is enabled
+                setPagerAdapter(adapter, autoRefresh)
+            }
+
         }
+    }
+
+    internal fun setPagerAdapter(adapter: PagerAdapter?, addObserver: Boolean) {
+        if (mPagerAdapter != null && mPagerAdapterObserver != null) {
+            // If we already have a PagerAdapter, unregister our observer
+            mPagerAdapter!!.unregisterDataSetObserver(mPagerAdapterObserver!!)
+        }
+
+        mPagerAdapter = adapter
+
+        if (addObserver && adapter != null) {
+            // Register our observer on the new adapter
+            if (mPagerAdapterObserver == null) {
+                mPagerAdapterObserver = PagerAdapterObserver()
+            }
+            adapter.registerDataSetObserver(mPagerAdapterObserver!!)
+        }
+
+        // Finally make sure we reflect the new adapter
+        populateFromPagerAdapter()
+    }
+
+    private fun populateFromPagerAdapter() {
+
     }
 
     companion object {
@@ -117,6 +165,10 @@ class CollapsingTabLayout : ViewGroup {
          * Indicates that the pager is in the process of settling to a final position.
          */
         val SCROLL_STATE_SETTLING = 2
+    }
+
+    class Tab {
+
     }
 
     class TabLayoutOnPageChangeListener(tabLayout: CollapsingTabLayout) : ViewPager.OnPageChangeListener {
@@ -159,7 +211,14 @@ class CollapsingTabLayout : ViewGroup {
 
     }
 
-    class Tab {
+    private inner class PagerAdapterObserver internal constructor() : DataSetObserver() {
 
+        override fun onChanged() {
+            populateFromPagerAdapter()
+        }
+
+        override fun onInvalidated() {
+            populateFromPagerAdapter()
+        }
     }
 }
