@@ -3,15 +3,14 @@ package com.fanhl.collapsingtablayout
 import android.content.Context
 import android.database.DataSetObserver
 import android.graphics.Canvas
+import android.graphics.drawable.Drawable
 import android.support.v4.util.Pools
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v4.view.ViewPager.*
 import android.util.AttributeSet
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.HorizontalScrollView
-import android.widget.LinearLayout
+import android.widget.*
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -321,8 +320,160 @@ class CollapsingTabLayout(context: Context, attrs: AttributeSet? = null, defStyl
         val MODE_SCROLLABLE = 0
     }
 
-    class Tab {
+    class Tab internal constructor() {
+        // FIXME: 2018/5/23 fanhl 这里是否允许自定义？TabView样式
 
+        private var mTag: Any? = null
+        private var mIcon: Drawable? = null
+        private var mText: CharSequence? = null
+        private var mContentDesc: CharSequence? = null
+        private var mPosition = INVALID_POSITION
+        private var mCustomView: View? = null
+
+        internal var mParent: CollapsingTabLayout? = null
+        internal var mView: TabView? = null
+
+        /**
+         * @return This Tab's tag object.
+         */
+        fun getTag(): Any? {
+            return mTag
+        }
+
+        /**
+         * Give this Tab an arbitrary object to hold for later use.
+         *
+         * @param tag Object to store
+         * @return The current instance for call chaining
+         */
+        fun setTag(tag: Any?): Tab {
+            mTag = tag
+            return this
+        }
+
+
+        /**
+         * Return the icon associated with this tab.
+         *
+         * @return The tab's icon
+         */
+        fun getIcon(): Drawable? {
+            return mIcon
+        }
+
+        /**
+         * Set the icon displayed on this tab.
+         *
+         * @param icon The drawable to use as an icon
+         * @return The current instance for call chaining
+         */
+        fun setIcon(icon: Drawable?): Tab {
+            mIcon = icon
+            updateView()
+            return this
+        }
+
+        /**
+         * Return the text of this tab.
+         *
+         * @return The tab's text
+         */
+        fun getText(): CharSequence? {
+            return mText
+        }
+
+        /**
+         * Set the text displayed on this tab. Text may be truncated if there is not room to display
+         * the entire string.
+         *
+         * @param text The text to display
+         * @return The current instance for call chaining
+         */
+        fun setText(text: CharSequence?): Tab {
+            mText = text
+            updateView()
+            return this
+        }
+
+        /**
+         * Return the current position of this tab in the action bar.
+         *
+         * @return Current position, or [.INVALID_POSITION] if this tab is not currently in
+         * the action bar.
+         */
+        fun getPosition(): Int {
+            return mPosition
+        }
+
+        internal fun setPosition(position: Int) {
+            mPosition = position
+        }
+
+        /**
+         * Returns the custom view used for this tab.
+         *
+         * @see .setCustomView
+         * @see .setCustomView
+         */
+        fun getCustomView(): View? {
+            return mCustomView
+        }
+
+        /**
+         * Set a custom view to be used for this tab.
+         *
+         *
+         * If the provided view contains a [TextView] with an ID of
+         * [android.R.id.text1] then that will be updated with the value given
+         * to [.setText]. Similarly, if this layout contains an
+         * [ImageView] with ID [android.R.id.icon] then it will be updated with
+         * the value given to [.setIcon].
+         *
+         *
+         * @param view Custom view to be used as a tab.
+         * @return The current instance for call chaining
+         */
+        fun setCustomView(view: View?): Tab {
+            mCustomView = view
+            updateView()
+            return this
+        }
+
+        /**
+         * Select this tab. Only valid if the tab has been added to the action bar.
+         */
+        fun select() {
+            if (mParent == null) {
+                throw IllegalArgumentException("Tab not attached to a TabLayout")
+            }
+            mParent!!.selectTab(this)
+        }
+
+        /**
+         * Returns true if this tab is currently selected.
+         */
+        fun isSelected(): Boolean {
+            if (mParent == null) {
+                throw IllegalArgumentException("Tab not attached to a TabLayout")
+            }
+            return mParent!!.getSelectedTabPosition() == mPosition
+        }
+
+
+        internal fun updateView() {
+            if (mView != null) {
+                mView.update()
+            }
+        }
+
+        companion object {
+            /**
+             * An invalid position for a tab.
+             *
+             * @see .getPosition
+             */
+            const val INVALID_POSITION = -1
+        }
     }
 
     internal inner class TabView(context: Context) : LinearLayout(context) {
